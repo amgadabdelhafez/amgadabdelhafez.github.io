@@ -3,6 +3,7 @@ import xbmcgui # type: ignore
 import xbmcaddon # type: ignore
 import re
 import os
+import json
 
 # Log statement to verify script execution and capture import errors
 try:
@@ -34,10 +35,32 @@ class SkipIntroPlayer(xbmc.Player):
 
         xbmc.log('skipintro: Initialized with default_delay: {}, skip_duration: {}'.format(self.default_delay, self.skip_duration), xbmc.LOGDEBUG)
 
+    def testRpc(self):
+        # Get the JSON-RPC service
+        jsonrpc = xbmc.jsonrpc
+
+        # Get the currently playing item
+        player_id = jsonrpc.request('Player.GetActivePlayers')[0]['playerid']
+        item_info = jsonrpc.request('Player.GetItem', {'playerid': player_id, 'properties': ['file']})
+        filename = item_info['result']['item']['file']
+
+        # Get chapter information
+        chapter_info = jsonrpc.request('Player.GetChapters', {'playerid': player_id, 'properties': ['name']})
+
+        # Print chapter names
+        if 'chapters' in chapter_info['result']:
+            for chapter in chapter_info['result']['chapters']:
+                xbmc.log(chapter['name'], xbmc.LOGDEBUG)
+        else:
+            xbmc.log("No chapters found for this video.", xbmc.LOGDEBUG)
+            
     def onAVStarted(self):
         xbmc.log('skipintro: AV started', xbmc.LOGDEBUG)
         if not self.bookmarks_checked:
             self.check_for_intro_chapter()
+        
+        xbmc.log('skipintro: testing rpc', xbmc.LOGDEBUG)
+        self.testRpc()
 
     def check_for_intro_chapter(self):
         xbmc.log('skipintro: Checking for intro chapter', xbmc.LOGDEBUG)
@@ -63,10 +86,11 @@ class SkipIntroPlayer(xbmc.Player):
         chapter_count = int(xbmc.getInfoLabel('Player.ChapterCount'))
         xbmc.log('skipintro: Total chapters found: {}'.format(chapter_count), xbmc.LOGDEBUG)
 
-        # The chapters of the currently playing item as csv in the format start1,end1,start2,end2,... Tokens must have values in the range from 0.0 to 100.0. end token must be less or equal than start token.
+        # The chapters of the currently playing item as csv in the format:
+        #  start1,end1,start2,end2,... Tokens must have values in the range from 0.0 to 100.0. end token must be less or equal than start token.
         raw_chapters = str(xbmc.getInfoLabel('Player.Chapters'))
         xbmc.log('skipintro: Raw Chapters found: {}'.format(raw_chapters), xbmc.LOGDEBUG)
-
+        # Raw Chapters found: 0.00000,7.27826,7.27826,10.65477,10.65477,99.19444,99.19444,99.94478
         chapters = []
         for i in range(chapter_count):
             chapter_name = xbmc.getInfoLabel(f'Player.ChapterName({i})')
