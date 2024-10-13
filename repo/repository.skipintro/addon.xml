@@ -11,7 +11,7 @@
         <provides>video</provides>
     </extension>
     
-    <extension point="plugin.video.skipintro" name="Skip Intro Addon">
+    <extension point="xbmc.addon.repository" name="Example Repository">
         <dir>
             <info compressed="false">https://raw.githubusercontent.com/amgadabdelhafez/repository.skipintro/master/repo/zips/addons.xml</info>
             <checksum>https://raw.githubusercontent.com/amgadabdelhafez/repository.skipintro/master/repo/zips/addons.xml.md5</checksum>
@@ -19,7 +19,7 @@
         </dir>
     </extension>
 
-    <extension point="plugin.video.skipintro">
+    <extension point="xbmc.addon.metadata">
         <summary lang="en">Skip intros/credits in tv shows.</summary>
         <description lang="en">This add-on reads bookmarks, subtitles, or prompts after a configurable delay to skip intros during playback.</description>
         <disclaimer></disclaimer>

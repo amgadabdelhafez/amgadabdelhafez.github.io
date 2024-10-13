@@ -11,7 +11,7 @@
         <provides>video</provides>
     </extension>
     
-    <extension point="xbmc.addon.repository" name="Skip Intro Repository">
+    <extension point="xbmc.addon.repository" name="Example Repository">
         <dir>
             <info compressed="false">https://raw.githubusercontent.com/amgadabdelhafez/repository.skipintro/master/repo/zips/addons.xml</info>
             <checksum>https://raw.githubusercontent.com/amgadabdelhafez/repository.skipintro/master/repo/zips/addons.xml.md5</checksum>
