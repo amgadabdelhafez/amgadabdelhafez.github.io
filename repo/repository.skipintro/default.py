@@ -38,14 +38,20 @@ class SkipIntroPlayer(xbmc.Player):
     def testRpc(self):
         # Get the JSON-RPC service
         jsonrpc = xbmc.jsonrpc
+        xbmc.log(f'xbmc.jsonrpc: {jsonrpc}', xbmc.LOGDEBUG)
 
         # Get the currently playing item
         player_id = jsonrpc.request('Player.GetActivePlayers')[0]['playerid']
+        xbmc.log(f'player_id: {player_id}', xbmc.LOGDEBUG)
+
         item_info = jsonrpc.request('Player.GetItem', {'playerid': player_id, 'properties': ['file']})
         filename = item_info['result']['item']['file']
+        xbmc.log(f'item_info: {item_info}', xbmc.LOGDEBUG)
+        xbmc.log(f'filename: {filename}', xbmc.LOGDEBUG)
 
         # Get chapter information
         chapter_info = jsonrpc.request('Player.GetChapters', {'playerid': player_id, 'properties': ['name']})
+        xbmc.log(f'chapter_info: {chapter_info}', xbmc.LOGDEBUG)
 
         # Print chapter names
         if 'chapters' in chapter_info['result']:
