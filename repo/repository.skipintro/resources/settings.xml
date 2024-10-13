@@ -1,0 +1,6 @@
+<settings>
+    <category label="Intro Skipping Settings">
+        <setting id="default_delay" type="number" label="Delay Before Prompt (seconds)" default="30" />
+        <setting id="skip_duration" type="number" label="Skip Duration (seconds)" default="60" />
+    </category>
+</settings>
