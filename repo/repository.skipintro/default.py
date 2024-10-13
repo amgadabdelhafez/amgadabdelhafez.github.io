@@ -19,9 +19,19 @@ class SkipIntroPlayer(xbmc.Player):
         self.bookmarks_checked = False
         self.default_skip_checked = False
 
-        # Read settings from Kodi configuration
-        self.default_delay = int(addon.getSetting('default_delay'))
-        self.skip_duration = int(addon.getSetting('skip_duration'))
+        # Read settings from Kodi configuration with error handling
+        try:
+            self.default_delay = int(addon.getSetting('default_delay'))
+        except ValueError:
+            self.default_delay = 60  # Default value if setting is not properly set
+            xbmc.log('skipintro: Error reading default_delay setting. Using default value: 60', xbmc.LOGWARNING)
+
+        try:
+            self.skip_duration = int(addon.getSetting('skip_duration'))
+        except ValueError:
+            self.skip_duration = 30  # Default value if setting is not properly set
+            xbmc.log('skipintro: Error reading skip_duration setting. Using default value: 30', xbmc.LOGWARNING)
+
         xbmc.log('skipintro: Initialized with default_delay: {}, skip_duration: {}'.format(self.default_delay, self.skip_duration), xbmc.LOGDEBUG)
 
     def onAVStarted(self):
