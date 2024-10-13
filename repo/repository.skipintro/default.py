@@ -62,6 +62,11 @@ class SkipIntroPlayer(xbmc.Player):
         # Retrieve chapter information using Kodi infolabels
         chapter_count = int(xbmc.getInfoLabel('Player.ChapterCount'))
         xbmc.log('skipintro: Total chapters found: {}'.format(chapter_count), xbmc.LOGDEBUG)
+
+        # The chapters of the currently playing item as csv in the format start1,end1,start2,end2,... Tokens must have values in the range from 0.0 to 100.0. end token must be less or equal than start token.
+        raw_chapters = str(xbmc.getInfoLabel('Player.Chapters'))
+        xbmc.log('skipintro: Raw Chapters found: {}'.format(raw_chapters), xbmc.LOGDEBUG)
+
         chapters = []
         for i in range(chapter_count):
             chapter_name = xbmc.getInfoLabel(f'Player.ChapterName({i})')
@@ -69,7 +74,7 @@ class SkipIntroPlayer(xbmc.Player):
             chapter_info = xbmc.getInfoLabel(f'Player.Chapter({i})')
             xbmc.log(f'skipintro: Raw Chapter({i}): {chapter_info}', xbmc.LOGDEBUG)
             
-            # if not chapter_name:
+            # if not chapter_name or chapter_name == 'Intro End':
             #     chapter_info = xbmc.getInfoLabel(f'Player.Chapter({i})')
             #     xbmc.log(f'skipintro: Raw Chapter({i}): {chapter_info}', xbmc.LOGDEBUG)
             #     chapter_parts = chapter_info.split('-', 1)
