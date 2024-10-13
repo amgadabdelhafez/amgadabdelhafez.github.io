@@ -35,61 +35,10 @@ class SkipIntroPlayer(xbmc.Player):
 
         xbmc.log('skipintro: Initialized with default_delay: {}, skip_duration: {}'.format(self.default_delay, self.skip_duration), xbmc.LOGDEBUG)
 
-    def testRpc(self):
-        xbmc.log('skipintro: Starting testRpc function', xbmc.LOGDEBUG)
-        try:
-            # Get the JSON-RPC service
-            jsonrpc = xbmc.executeJSONRPC
-            xbmc.log('skipintro: JSON-RPC service obtained', xbmc.LOGDEBUG)
-
-            # Get the currently playing item
-            result = jsonrpc('{"jsonrpc": "2.0", "method": "Player.GetActivePlayers", "id": 1}')
-            xbmc.log(f'skipintro: GetActivePlayers result: {result}', xbmc.LOGDEBUG)
-            players = json.loads(result)['result']
-            if not players:
-                xbmc.log('skipintro: No active players found', xbmc.LOGDEBUG)
-                return
-
-            player_id = players[0]['playerid']
-            xbmc.log(f'skipintro: player_id: {player_id}', xbmc.LOGDEBUG)
-
-            item_info = json.loads(jsonrpc(json.dumps({
-                "jsonrpc": "2.0",
-                "method": "Player.GetItem",
-                "params": {"playerid": player_id, "properties": ["file"]},
-                "id": 1
-            })))
-            xbmc.log(f'skipintro: item_info: {item_info}', xbmc.LOGDEBUG)
-            filename = item_info['result']['item']['file']
-            xbmc.log(f'skipintro: filename: {filename}', xbmc.LOGDEBUG)
-
-            # Get chapter information
-            chapter_info = json.loads(jsonrpc(json.dumps({
-                "jsonrpc": "2.0",
-                "method": "Player.GetChapters",
-                "params": {"playerid": player_id, "properties": ["name", "title", "time"]},
-                "id": 1
-            })))
-            xbmc.log(f'skipintro: chapter_info: {chapter_info}', xbmc.LOGDEBUG)
-
-            # Print chapter names
-            if 'result' in chapter_info and 'chapters' in chapter_info['result']:
-                for chapter in chapter_info['result']['chapters']:
-                    name = chapter.get('name') or chapter.get('title') or "Unnamed Chapter"
-                    time = chapter['time'] / 1000  # Convert milliseconds to seconds
-                    xbmc.log(f'skipintro: Chapter: Name: {name}, Time: {time}', xbmc.LOGDEBUG)
-            else:
-                xbmc.log("skipintro: No chapters found for this video.", xbmc.LOGDEBUG)
-        except Exception as e:
-            xbmc.log(f'skipintro: Error in testRpc: {str(e)}', xbmc.LOGERROR)
-            
     def onAVStarted(self):
         xbmc.log('skipintro: onAVStarted method called', xbmc.LOGINFO)
         if not self.bookmarks_checked:
             self.check_for_intro_chapter()
-        
-        xbmc.log('skipintro: testing rpc', xbmc.LOGDEBUG)
-        self.testRpc()
 
     def check_for_intro_chapter(self):
         xbmc.log('skipintro: Checking for intro chapter', xbmc.LOGDEBUG)
@@ -113,30 +62,20 @@ class SkipIntroPlayer(xbmc.Player):
     def getChapters(self):
         xbmc.log('skipintro: Getting chapters', xbmc.LOGDEBUG)
         try:
-            jsonrpc = xbmc.executeJSONRPC
-            result = jsonrpc('{"jsonrpc": "2.0", "method": "Player.GetActivePlayers", "id": 1}')
-            players = json.loads(result)['result']
-            if not players:
-                xbmc.log('skipintro: No active players found', xbmc.LOGDEBUG)
-                return []
-
-            player_id = players[0]['playerid']
-            chapter_info = json.loads(jsonrpc(json.dumps({
-                "jsonrpc": "2.0",
-                "method": "Player.GetChapters",
-                "params": {"playerid": player_id, "properties": ["name", "title", "time"]},
-                "id": 1
-            })))
+            chapter_count = int(xbmc.getInfoLabel('Player.ChapterCount'))
+            xbmc.log(f'skipintro: Chapter count: {chapter_count}', xbmc.LOGDEBUG)
             
             chapters = []
-            if 'result' in chapter_info and 'chapters' in chapter_info['result']:
-                for chapter in chapter_info['result']['chapters']:
-                    name = chapter.get('name') or chapter.get('title') or f"Chapter {len(chapters) + 1}"
-                    time = chapter['time'] / 1000  # Convert milliseconds to seconds
-                    xbmc.log(f'skipintro: Chapter: Name: {name}, Time: {time}', xbmc.LOGDEBUG)
-                    chapters.append({'name': name, 'time': time})
-            else:
-                xbmc.log("skipintro: No chapters found for this video.", xbmc.LOGDEBUG)
+            for i in range(1, chapter_count + 1):
+                chapter_name = xbmc.getInfoLabel(f'Player.ChapterName({i})')
+                chapter_time = xbmc.getInfoLabel(f'Player.ChapterTime({i})')
+                
+                # Convert chapter time to seconds
+                time_parts = chapter_time.split(':')
+                seconds = sum(int(x) * 60 ** i for i, x in enumerate(reversed(time_parts)))
+                
+                xbmc.log(f'skipintro: Chapter {i}: Name: {chapter_name}, Time: {seconds}', xbmc.LOGDEBUG)
+                chapters.append({'name': chapter_name, 'time': seconds})
             
             return chapters
         except Exception as e:
