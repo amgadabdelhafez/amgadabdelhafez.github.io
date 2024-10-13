@@ -1,6 +1,6 @@
-import xbmc
-import xbmcgui
-import xbmcaddon
+import xbmc # type: ignore
+import xbmcgui # type: ignore
+import xbmcaddon # type: ignore
 import re
 import os
 
@@ -63,18 +63,20 @@ class SkipIntroPlayer(xbmc.Player):
         chapter_count = int(xbmc.getInfoLabel('Player.ChapterCount'))
         xbmc.log('skipintro: Total chapters found: {}'.format(chapter_count), xbmc.LOGDEBUG)
         chapters = []
-        for i in range(1, chapter_count + 1):
+        for i in range(chapter_count):
             chapter_name = xbmc.getInfoLabel(f'Player.ChapterName({i})')
             xbmc.log(f'skipintro: Raw ChapterName({i}): {chapter_name}', xbmc.LOGDEBUG)
+            chapter_info = xbmc.getInfoLabel(f'Player.Chapter({i})')
+            xbmc.log(f'skipintro: Raw Chapter({i}): {chapter_info}', xbmc.LOGDEBUG)
             
-            if not chapter_name or chapter_name == 'Intro End':
-                chapter_info = xbmc.getInfoLabel(f'Player.Chapter({i})')
-                xbmc.log(f'skipintro: Raw Chapter({i}): {chapter_info}', xbmc.LOGDEBUG)
-                chapter_parts = chapter_info.split('-', 1)
-                if len(chapter_parts) > 1:
-                    chapter_name = chapter_parts[1].strip()
-                else:
-                    chapter_name = f"Chapter {i}"
+            # if not chapter_name:
+            #     chapter_info = xbmc.getInfoLabel(f'Player.Chapter({i})')
+            #     xbmc.log(f'skipintro: Raw Chapter({i}): {chapter_info}', xbmc.LOGDEBUG)
+            #     chapter_parts = chapter_info.split('-', 1)
+            #     if len(chapter_parts) > 1:
+            #         chapter_name = chapter_parts[1].strip()
+            #     else:
+            #         chapter_name = f"Chapter {i}"
             
             chapter_time = self.getChapterTime(i)
             xbmc.log('skipintro: Chapter {}: Name: {}, Time: {}'.format(i, chapter_name, chapter_time), xbmc.LOGDEBUG)
