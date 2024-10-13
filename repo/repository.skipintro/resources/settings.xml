@@ -1,6 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
-    <category label="Intro Skipping Settings">
-        <setting id="default_delay" type="number" label="Delay Before Prompt (seconds)" default="30" />
-        <setting id="skip_duration" type="number" label="Skip Duration (seconds)" default="60" />
+    <category label="General">
+        <setting id="skip_by_default" type="bool" label="Skip Intro by Default" default="false"/>
+        <setting id="skip_to_chapter" type="number" label="Skip to Chapter" default="2"/>
+        <setting id="seconds_before_skip" type="number" label="Seconds Before Skip" default="5"/>
+    </category>
+    <category label="Advanced">
+        <setting id="use_default_skip_fallback" type="bool" label="Use Default Skip as Fallback" default="true"/>
+        <setting id="default_delay" type="number" label="Default Delay (seconds)" default="60" enable="eq(-1,true)" visible="eq(-1,true)"/>
+        <setting id="skip_duration" type="number" label="Skip Duration (seconds)" default="30" enable="eq(-2,true)" visible="eq(-2,true)"/>
+        <setting id="chapter_diff_threshold" type="number" label="Chapter Difference Threshold (seconds)" default="15"/>
+        <setting id="dialog_display_duration" type="number" label="Dialog Display Duration (seconds)" default="5"/>
     </category>
 </settings>
