@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.skipintro"
        name="Skip Intro Addon"
-       version="1.2.5"
+       version="1.2.6"
        provider-name="Amgad Abdelhafez">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
@@ -11,7 +11,7 @@
         <provides>video</provides>
     </extension>
     
-    <extension point="xbmc.addon.repository" name="Example Repository">
+    <extension point="xbmc.addon.repository" name="Skip Intro Repository">
         <dir>
             <info compressed="false">https://raw.githubusercontent.com/amgadabdelhafez/repository.skipintro/master/repo/zips/addons.xml</info>
             <checksum>https://raw.githubusercontent.com/amgadabdelhafez/repository.skipintro/master/repo/zips/addons.xml.md5</checksum>
