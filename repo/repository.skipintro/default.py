@@ -64,7 +64,12 @@ class SkipIntroPlayer(xbmc.Player):
         xbmc.log('skipintro: Total chapters found: {}'.format(chapter_count), xbmc.LOGDEBUG)
         chapters = []
         for i in range(1, chapter_count + 1):
-            chapter_name = xbmc.getInfoLabel(f'Player.ChapterName({i})')
+            chapter_info = xbmc.getInfoLabel(f'Player.Chapter({i})')
+            chapter_parts = chapter_info.split('-', 1)
+            if len(chapter_parts) > 1:
+                chapter_name = chapter_parts[1].strip()
+            else:
+                chapter_name = f"Chapter {i}"
             chapter_time = self.getChapterTime(i)
             xbmc.log('skipintro: Chapter {}: Name: {}, Time: {}'.format(i, chapter_name, chapter_time), xbmc.LOGDEBUG)
             chapters.append({'name': chapter_name, 'time': chapter_time})
