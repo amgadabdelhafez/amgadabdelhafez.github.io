@@ -14,13 +14,8 @@ def delete_file(file_path):
         os.remove(file_path)
         print(f"Deleted file: {file_path}")
 
-def increment_version(version):
-    parts = version.split('.')
-    parts[-1] = str(int(parts[-1]) + 1)
-    return '.'.join(parts)
-
 def update_addon_xml(file_path):
-    print(f"Attempting to update addon.xml at: {file_path}")
+    print(f"Checking addon.xml at: {file_path}")
     try:
         tree = ET.parse(file_path)
         root = tree.getroot()
@@ -36,13 +31,10 @@ def update_addon_xml(file_path):
             print("Error: 'version' attribute not found in the 'addon' element.")
             return None
         
-        new_version = increment_version(current_version)
-        root.set('version', new_version)
-        tree.write(file_path, encoding='utf-8', xml_declaration=True)
-        print(f"Updated addon.xml version to: {new_version}")
-        return new_version
+        print(f"Current addon.xml version: {current_version}")
+        return current_version
     except Exception as e:
-        print(f"An error occurred while updating addon.xml: {str(e)}")
+        print(f"An error occurred while checking addon.xml: {str(e)}")
         return None
 
 def update_index_html(file_path, new_version):
@@ -77,20 +69,20 @@ def main():
         if file.startswith('plugin.video.skipintro-') and file.endswith('.zip'):
             delete_file(file)
 
-    # Update addon.xml and get new version
-    new_version = update_addon_xml('repo/repository.skipintro/addon.xml')
-    if new_version is None:
-        print("Failed to update addon.xml. Build process aborted.")
+    # Check addon.xml and get current version
+    current_version = update_addon_xml('repo/repository.skipintro/addon.xml')
+    if current_version is None:
+        print("Failed to read addon.xml. Build process aborted.")
         return
 
     # Update index.html
-    update_index_html('index.html', new_version)
+    update_index_html('index.html', current_version)
 
     # Run _repo_generator.py
     run_repo_generator()
 
     # Copy new zip file to root
-    copy_new_zip_to_root(new_version)
+    copy_new_zip_to_root(current_version)
 
 if __name__ == "__main__":
     main()
