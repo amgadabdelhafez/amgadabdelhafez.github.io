@@ -16,7 +16,7 @@ if [ ! -f "$ADDON_XML_PATH" ]; then
     exit 1
 fi
 
-VERSION=$(grep -E 'id="plugin\.video\.skipintro".*version="[^"]+"' "$ADDON_XML_PATH" | sed -E 's/.*version="([^"]+)".*/\1/')
+VERSION=$(xmllint --xpath "string(/addon/@version)" "$ADDON_XML_PATH")
 if [ -z "$VERSION" ]; then
     echo "Error: Could not extract version from addon.xml"
     exit 1
