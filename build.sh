@@ -12,7 +12,7 @@ if [ ! -f "$ADDON_XML_PATH" ]; then
     exit 1
 fi
 
-VERSION=$(grep -oP 'id="plugin\.video\.skipintro"[^>]*version="\K[^"]+' "$ADDON_XML_PATH")
+VERSION=$(grep -E 'id="plugin\.video\.skipintro".*version="[^"]+"' "$ADDON_XML_PATH" | sed -E 's/.*version="([^"]+)".*/\1/')
 if [ -z "$VERSION" ]; then
     echo "Error: Could not extract version from addon.xml"
     exit 1
@@ -26,7 +26,7 @@ if [ ! -f "$README_PATH" ]; then
     exit 1
 fi
 
-README_VERSION=$(grep -oP '### v\K[0-9.]+' "$README_PATH" | head -1)
+README_VERSION=$(grep -E '^### v[0-9.]+' "$README_PATH" | head -1 | sed -E 's/^### v([0-9.]+).*/\1/')
 if [ -z "$README_VERSION" ]; then
     echo "Error: Could not extract version from README.md"
     exit 1
