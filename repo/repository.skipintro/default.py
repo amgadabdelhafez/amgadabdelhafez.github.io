@@ -175,8 +175,8 @@ class SkipIntroPlayer(xbmc.Player):
             xbmc.log('skipintro: Error calculating current percentage. Total duration is zero.', xbmc.LOGERROR)
             return
 
-        if self.intro_bookmark is not None and (self.intro_bookmark > 10):
-            xbmc.log('skipintro: Skip point is after 10% of video duration. Skipping disabled.', xbmc.LOGINFO)
+        if self.intro_bookmark is not None and (self.intro_bookmark > 5):
+            xbmc.log('skipintro: Skip point is after 5% of video duration. Skipping disabled.', xbmc.LOGINFO)
             return
 
         if self.using_default_skip:
