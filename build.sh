@@ -78,17 +78,17 @@ else
 fi
 
 # Create addons.xml
-cat > release/addons.xml << EOF
+cat > "$RELEASE_DIR/addons.xml" << EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <addons>
-    $(cat addon.xml)
+    $(cat "$ADDON_XML_PATH")
 </addons>
 EOF
 
 # Generate MD5
-cd release
+cd "$RELEASE_DIR"
 md5sum addons.xml > addons.xml.md5
-cd -
+cd "$REPO_DIR"
 
 # Create repository XML
 cat > release/repository.plugin.video.skipintro.xml << EOF
