@@ -5,8 +5,12 @@ set -e
 
 echo "Building Skip Intro addon..."
 
+# Set paths
+ADDON_DIR="../plugin.video.skipintro"
+REPO_DIR="$(pwd)"
+
 # Get current version from addon.xml
-ADDON_XML_PATH="repo/repository.skipintro/addon.xml"
+ADDON_XML_PATH="$ADDON_DIR/addon.xml"
 if [ ! -f "$ADDON_XML_PATH" ]; then
     echo "Error: addon.xml not found at $ADDON_XML_PATH"
     exit 1
@@ -20,7 +24,7 @@ fi
 echo "Current version: $VERSION"
 
 # Check version consistency in README
-README_PATH="repo/repository.skipintro/README.md"
+README_PATH="$ADDON_DIR/README.md"
 if [ -f "$README_PATH" ]; then
     README_VERSION=$(grep -E '^### v[0-9.]+' "$README_PATH" | head -1 | sed -E 's/^### v([0-9.]+).*/\1/')
     if [ -n "$README_VERSION" ]; then
@@ -36,34 +40,42 @@ else
     echo "Warning: README.md not found at $README_PATH"
 fi
 
-# Continue with the build process regardless of README.md version
-
 # Create release directory if it doesn't exist
-mkdir -p release
+RELEASE_DIR="$REPO_DIR/release"
+mkdir -p "$RELEASE_DIR"
+echo "Release directory: $RELEASE_DIR"
 
 # Clean up old files
-rm -f release/plugin.video.skipintro-*.zip
-rm -f release/repository.plugin.video.skipintro.xml
-rm -f release/repository.plugin.video.skipintro.zip
+rm -f "$RELEASE_DIR"/plugin.video.skipintro-*.zip
+rm -f "$RELEASE_DIR"/repository.plugin.video.skipintro.xml
+rm -f "$RELEASE_DIR"/repository.plugin.video.skipintro.zip
 
 # Create temporary build directory
 BUILD_DIR=$(mktemp -d)
-ADDON_DIR="$BUILD_DIR/plugin.video.skipintro"
+TEMP_ADDON_DIR="$BUILD_DIR/plugin.video.skipintro"
+echo "Build directory: $BUILD_DIR"
+echo "Temporary addon directory: $TEMP_ADDON_DIR"
 
 # Create addon directory structure
-mkdir -p "$ADDON_DIR/resources/language/resource.language.en_gb"
+mkdir -p "$TEMP_ADDON_DIR"
 
 # Copy files
-cp "$ADDON_XML_PATH" "$ADDON_DIR/"
-cp "repo/repository.skipintro/default.py" "$ADDON_DIR/" 2>/dev/null || echo "Warning: default.py not found"
-cp "$README_PATH" "$ADDON_DIR/" 2>/dev/null || echo "Warning: README.md not found"
-cp "repo/repository.skipintro/resources/settings.xml" "$ADDON_DIR/resources/" 2>/dev/null || echo "Warning: settings.xml not found"
-cp "repo/repository.skipintro/resources/language/resource.language.en_gb/strings.po" "$ADDON_DIR/resources/language/resource.language.en_gb/" 2>/dev/null || echo "Warning: strings.po not found"
+echo "Copying files..."
+cp -R "$ADDON_DIR"/* "$TEMP_ADDON_DIR/" && echo "Copied addon files" || echo "Failed to copy addon files"
 
 # Create zip file
+echo "Creating zip file..."
 cd "$BUILD_DIR"
-zip -r "../release/plugin.video.skipintro-$VERSION.zip" "plugin.video.skipintro"
+zip -r "$RELEASE_DIR/plugin.video.skipintro-$VERSION.zip" "plugin.video.skipintro"
+ZIP_RESULT=$?
 cd -
+
+if [ $ZIP_RESULT -eq 0 ]; then
+    echo "Successfully created zip file: $RELEASE_DIR/plugin.video.skipintro-$VERSION.zip"
+else
+    echo "Failed to create zip file. Error code: $ZIP_RESULT"
+    exit 1
+fi
 
 # Create addons.xml
 cat > release/addons.xml << EOF
