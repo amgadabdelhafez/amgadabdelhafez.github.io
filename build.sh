@@ -54,11 +54,11 @@ ADDON_DIR="$BUILD_DIR/plugin.video.skipintro"
 mkdir -p "$ADDON_DIR/resources/language/resource.language.en_gb"
 
 # Copy files
-cp addon.xml "$ADDON_DIR/"
-cp default.py "$ADDON_DIR/"
-cp README.md "$ADDON_DIR/"
-cp resources/settings.xml "$ADDON_DIR/resources/"
-cp resources/language/resource.language.en_gb/strings.po "$ADDON_DIR/resources/language/resource.language.en_gb/"
+cp "$ADDON_XML_PATH" "$ADDON_DIR/"
+cp "repo/repository.skipintro/default.py" "$ADDON_DIR/" 2>/dev/null || echo "Warning: default.py not found"
+cp "$README_PATH" "$ADDON_DIR/" 2>/dev/null || echo "Warning: README.md not found"
+cp "repo/repository.skipintro/resources/settings.xml" "$ADDON_DIR/resources/" 2>/dev/null || echo "Warning: settings.xml not found"
+cp "repo/repository.skipintro/resources/language/resource.language.en_gb/strings.po" "$ADDON_DIR/resources/language/resource.language.en_gb/" 2>/dev/null || echo "Warning: strings.po not found"
 
 # Create zip file
 cd "$BUILD_DIR"
