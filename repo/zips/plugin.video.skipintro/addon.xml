@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<addon id="plugin.video.skipintro" name="Skip Intro Addon" version="1.2.94" provider-name="Amgad Abdelhafez">
+<addon id="plugin.video.skipintro" name="Skip Intro Addon" version="1.3.9" provider-name="Amgad Abdelhafez">
     <requires>
         <import addon="xbmc.python" version="3.0.0" />
     </requires>
@@ -7,23 +7,54 @@
     <extension point="xbmc.service" library="default.py">
         <provides>video</provides>
     </extension>
-    
-    <extension point="xbmc.addon.repository" name="Example Repository">
-        <dir>
-            <info compressed="false">https://raw.githubusercontent.com/amgadabdelhafez/amgadabdelhafez.github.io/master/repo/zips/addons.xml</info>
-            <checksum>https://raw.githubusercontent.com/amgadabdelhafez/amgadabdelhafez.github.io/master/repo/zips/addons.xml.md5</checksum>
-            <datadir zip="true">https://raw.githubusercontent.com/amgadabdelhafez/amgadabdelhafez.github.io/master/repo/zips/</datadir>
-        </dir>
+
+    <extension point="kodi.context.item" library="context.py">
+        <item>
+            <label>Set Skip Intro Times</label>
+            <visible>[String.IsEqual(ListItem.DBType,episode) |
+                String.IsEqual(ListItem.DBType,tvshow)] +
+                !String.IsEmpty(ListItem.Path)</visible>
+        </item>
+    </extension>
+
+    <extension point="xbmc.gui.skin" debugging="true" effectslowdown="1.0">
+        <res width="1280" height="720" aspect="16:9" default="true" folder="resources/skins/default/720p" />
     </extension>
 
     <extension point="xbmc.addon.metadata">
-        <summary lang="en">Skip intros/credits in tv shows.</summary>
-        <description lang="en">This add-on skips intros during playback.</description>
-        <disclaimer />
+        <summary lang="en">Smart intro/outro detection and skipping for TV shows</summary>
+        <description lang="en">This add-on automatically detects and remembers intro/outro times for
+            TV shows. Features include:
+            - Automatic show and episode detection
+            - Saves intro/outro times for future playback
+            - Smart chapter detection using ffmpeg (will notify if not installed)
+            - Chapter-based or manual time input for setting skip times
+            - Configurable skip settings and database options</description>
         <platform>all</platform>
         <assets>
-            <icon>icon.png</icon>
-            <fanart>fanart.jpg</fanart>
+            <icon>resources/icon.png</icon>
         </assets>
+        <news>v1.3.8 (2025-02-19)
+            - Fixed settings parsing errors
+            - Improved database migration process
+            - Resolved issues with chapter-based skip time selection
+            v1.3.7 (2025-02-19)
+            - Improved chapter-based skip time selection
+            - Enhanced database support for chapter-based configurations
+            - Fixed issues with saving and retrieving chapter-based settings
+            v1.3.6 (2025-02-19)
+            - Fixed chapter-based skip time selection
+            - Improved reliability by using direct chapter number input
+            v1.3.5 (2025-02-19)
+            - Recovered feature to set skip times based on chapters
+            - Added option to choose between manual time input and chapter-based selection
+            - Updated UI for improved user experience
+            v1.3.4 (2025-02-19)
+            - Initial attempt at fixing database schema issues
+            v1.3.2 (2024-01-19)
+            - Switched to ffmpeg for reliable chapter detection
+            - Improved skip intro prompt handling
+            - Better performance with optimized caching
+            - Reduced logging for cleaner operation</news>
     </extension>
 </addon>
