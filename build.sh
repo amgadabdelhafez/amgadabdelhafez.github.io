@@ -6,11 +6,32 @@ set -e
 echo "Building Skip Intro addon..."
 
 # Get current version from addon.xml
-VERSION=$(grep -oP 'id="plugin\.video\.skipintro"[^>]*version="\K[^"]+' addon.xml)
+ADDON_XML_PATH="repo/repository.skipintro/addon.xml"
+if [ ! -f "$ADDON_XML_PATH" ]; then
+    echo "Error: addon.xml not found at $ADDON_XML_PATH"
+    exit 1
+fi
+
+VERSION=$(grep -oP 'id="plugin\.video\.skipintro"[^>]*version="\K[^"]+' "$ADDON_XML_PATH")
+if [ -z "$VERSION" ]; then
+    echo "Error: Could not extract version from addon.xml"
+    exit 1
+fi
 echo "Current version: $VERSION"
 
 # Check version consistency in README
-README_VERSION=$(grep -oP '### v\K[0-9.]+' README.md | head -1)
+README_PATH="repo/repository.skipintro/README.md"
+if [ ! -f "$README_PATH" ]; then
+    echo "Error: README.md not found at $README_PATH"
+    exit 1
+fi
+
+README_VERSION=$(grep -oP '### v\K[0-9.]+' "$README_PATH" | head -1)
+if [ -z "$README_VERSION" ]; then
+    echo "Error: Could not extract version from README.md"
+    exit 1
+fi
+
 if [ "$VERSION" != "$README_VERSION" ]; then
     echo "Error: Version mismatch!"
     echo "addon.xml: $VERSION"
